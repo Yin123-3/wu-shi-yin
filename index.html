@@ -1,1 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYBERPUNK PORTFOLIO // ネオ東京</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Orbitron & Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 基礎字體與背景設定 */
+    body {
+      font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
+      background-color: #070612;
+      color: #00f0ff;
+      overflow-x: hidden;
+    }
 
+    /* 網格與夜空霓虹背景 */
+    .cyber-bg {
+      background: 
+        radial-gradient(circle at 50% 15%, rgba(255, 0, 128, 0.18) 0%, transparent 65%),
+        radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.12) 0%, transparent 55%),
+        linear-gradient(rgba(18, 14, 38, 0.95), rgba(7, 6, 18, 0.98)),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+    }
+
+    /* 復古 CRT 掃描線 Overlay */
+    .scanlines {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.3) 50%
+      );
+      background-size: 100% 4px;
+      z-index: 50;
+      opacity: 0.7;
+    }
+
+    /* 霓虹文字陰影 */
+    .neon-text-cyan {
+      text-shadow: 0 0 6px #00f0ff, 0 0 18px rgba(0, 240, 255, 0.6), 0 0 35px rgba(0, 240, 255, 0.4);
+    }
+    .neon-text-pink {
+      text-shadow: 0 0 6px #ff007f, 0 0 18px rgba(255, 0, 127, 0.6), 0 0 35px rgba(255, 0, 127, 0.4);
+    }
+
+    /* 賽博科技邊框切角 (Polygon Clip-path) */
+    .cyber-clip {
+      clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+    }
+    .cyber-clip-avatar {
+      clip-path: polygon(22% 0, 78% 0, 100% 22%, 100% 78%, 78% 100%, 22% 100%, 0 78%, 0 22%);
+    }
+
+    /* 已解鎖卡片 (Cyan & Magenta Glow Effect) */
+    .unlocked-card {
+      background: rgba(12, 18, 36, 0.85);
+      border: 1px solid #00f0ff;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.25), inset 0 0 15px rgba(0, 240, 255, 0.12);
+      transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .unlocked-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.35), transparent);
+      transition: 0.6s;
+    }
+
+    .unlocked-card:hover::before {
+      left: 100%;
+    }
+
+    .unlocked-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      border-color: #ff007f;
+      box-shadow: 0 0 25px rgba(255, 0, 127, 0.75), inset 0 0 20px rgba(255, 0, 127, 0.3);
+    }
+
+    .unlocked-card:hover .card-title {
+      color: #ff007f;
+      text-shadow: 0 0 10px #ff007f;
+    }
+
+    .unlocked-card:hover .card-badge {
+      background-color: #ff007f;
+      color: #ffffff;
+      box-shadow: 0 0 12px #ff007f;
+    }
+
+    /* 未解鎖灰色卡片 */
+    .locked-card {
+      background: rgba(14, 16, 24, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #4b5563;
+      cursor: not-allowed;
+      position: relative;
+      user-select: none;
+      transition: all 0.3s ease;
+    }
+
+    .locked-card:hover {
+      border-color: rgba(239, 68, 68, 0.4);
+      background: rgba(22, 18, 28, 0.75);
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+    }
+
+    /* 呼吸燈動畫 */
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.03); }
+    }
+    .pulse-animation {
+      animation: pulse-glow 3s infinite ease-in-out;
+    }
+
+    /* HUD 視覺割線 */
+    .hud-line {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00f0ff, #ff007f, transparent);
+    }
+  </style>
+</head>
+<body class="cyber-bg min-h-screen relative flex flex-col justify-between p-4 sm:p-8">
+
+  <!-- 螢幕掃描線 Overlay -->
+  <div class="scanlines"></div>
+
+  <div class="max-w-6xl mx-auto w-full z-10 my-auto">
+    
+    <!-- 頁首與個人資料區域 -->
+    <header class="flex flex-col items-center text-center mb-10 relative">
+      
+      <!-- 頂部 HUD 裝飾條 -->
+      <div class="w-full max-w-md hud-line mb-6"></div>
+
+      <!-- 大頭貼區域 -->
+      <div class="relative group mb-4">
+        <!-- 發光旋轉外框裝飾 -->
+        <div class="absolute -inset-2 rounded-full bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 blur-md opacity-80 group-hover:opacity-100 transition duration-1000 pulse-animation"></div>
+        
+        <!-- 頭像容器 -->
+        <div class="relative w-28 h-28 sm:w-36 sm:h-36 bg-slate-900 border-2 border-cyan-400 cyber-clip-avatar p-1 flex items-center justify-center">
+          <img 
+            src="https://i.postimg.cc/TwcB6HSL/2a-Obo-R3Myk7GMr-Gxb-H9Xq-Rs3Ocz-LHIIQM1p-SM1rs.jpg" 
+            alt="Cyberpunk Avatar" 
+            class="w-full h-full object-cover cyber-clip-avatar filter brightness-110 contrast-125"
+            onerror="this.src='https://placehold.co/300x300/070612/00f0ff?text=AVATAR'"
+          >
+          <!-- 角落科技標籤 -->
+          <span class="absolute bottom-1 right-2 text-[9px] bg-cyan-500 text-black px-1 font-bold tracking-tighter">SYS.VER 2.0.77</span>
+        </div>
+      </div>
+
+      <!-- 名字與標題 -->
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-widest text-white mb-2 neon-text-cyan flex items-center gap-2">
+        <span class="text-pink-500">//</span> 作品集 PORTFOLIO <span class="text-xs sm:text-sm text-cyan-300 font-normal border border-cyan-500/40 px-2 py-0.5 rounded">ONLINE</span>
+      </h1>
+      
+      <!-- 日文副標題 & 任務指示 -->
+      <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-300 font-medium tracking-wider">
+        <span class="text-pink-400 font-bold">ネオ東京 // HUB</span>
+        <span class="text-slate-600">|</span>
+        <span class="text-cyan-400 bg-cyan-950/70 border border-cyan-800 px-3 py-1 rounded-sm shadow-[0_0_12px_rgba(0,240,255,0.25)]">
+          [ ミッション選択 ]
+        </span>
+      </div>
+
+      <!-- 底部 HUD 狀態資訊 -->
+      <div class="mt-6 flex items-center gap-3 sm:gap-5 text-[10px] sm:text-xs text-slate-400 border-t border-b border-cyan-900/60 py-1.5 px-6 bg-slate-950/50 backdrop-blur-sm">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>STATUS: <strong class="text-emerald-400">READY</strong></span>
+        </div>
+        <span class="text-slate-700">|</span>
+        <div>CLEARANCE: <strong class="text-cyan-400">LEVEL 2</strong></div>
+        <span class="text-slate-700">|</span>
+        <div>PROGRESS: <strong class="text-pink-400">2 / 16</strong></div>
+      </div>
+    </header>
+
+    <!-- 16 個任務按鈕網格區域 (手機版強制適應雙欄 grid-cols-2) -->
+    <main class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+
+      <!-- ==================== 按鈕 1 (已解鎖) ==================== -->
+      <a href="w1/index.html" class="unlocked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32 group">
+        <div class="flex justify-between items-start">
+          <span class="card-badge text-[10px] sm:text-xs font-bold tracking-wider px-2 py-0.5 bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 rounded-sm transition-colors">
+            MISSION 01
+          </span>
+          <span class="text-[10px] text-cyan-400 font-mono flex items-center gap-1">
+            <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span> [ 解放済み ]
+          </span>
+        </div>
+        <div class="my-auto">
+          <h2 class="card-title text-xs sm:text-base font-bold text-white transition-colors duration-200 line-clamp-2">
+            Week 1-數位名片 <span class="block text-[10px] sm:text-xs text-slate-400 font-normal font-mono">(デジタル名刺)</span>
+          </h2>
+        </div>
+        <div class="flex justify-between items-center text-[10px] text-cyan-400 font-mono border-t border-cyan-900/40 pt-1.5">
+          <span>ACCESS SYSTEM &gt;&gt;</span>
+          <span class="group-hover:translate-x-1 transition-transform">→</span>
+        </div>
+      </a>
+
+      <!-- ==================== 按鈕 2 (已解鎖) ==================== -->
+      <a href="w2/index.html" class="unlocked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32 group">
+        <div class="flex justify-between items-start">
+          <span class="card-badge text-[10px] sm:text-xs font-bold tracking-wider px-2 py-0.5 bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 rounded-sm transition-colors">
+            MISSION 02
+          </span>
+          <span class="text-[10px] text-cyan-400 font-mono flex items-center gap-1">
+            <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span> [ 解放済み ]
+          </span>
+        </div>
+        <div class="my-auto">
+          <h2 class="card-title text-xs sm:text-base font-bold text-white transition-colors duration-200 line-clamp-2">
+            Week 2-今天吃甚麼？ <span class="block text-[10px] sm:text-xs text-slate-400 font-normal font-mono">(今日何食べる？)</span>
+          </h2>
+        </div>
+        <div class="flex justify-between items-center text-[10px] text-cyan-400 font-mono border-t border-cyan-900/40 pt-1.5">
+          <span>ACCESS SYSTEM &gt;&gt;</span>
+          <span class="group-hover:translate-x-1 transition-transform">→</span>
+        </div>
+      </a>
+
+      <!-- Mission 03 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 03</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 3 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 04 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 04</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 4 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 05 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 05</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 5 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 06 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 06</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 6 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 07 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 07</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 7 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 08 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 08</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 8 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 09 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 09</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 9 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 10 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 10</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 10 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 11 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 11</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 11 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 12 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 12</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 12 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 13 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 13</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 13 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 14 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 14</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 14 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 15 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 15</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 15 - 未解鎖</h2>
+          <p class="text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 16 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 16</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 16 - 期末專案</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(最終ミッション)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">FINAL MISSION // LOCKED</div>
+      </div>
+
+    </main>
+
+    <!-- 頁尾資訊 -->
+    <footer class="mt-12 text-center text-xs text-slate-500 font-mono flex flex-col sm:flex-row justify-between items-center border-t border-cyan-900/40 pt-4 gap-2">
+      <div>
+        &copy; 2026 CYBERPUNK PORTFOLIO SYSTEM. ALL RIGHTS RESERVED.
+      </div>
+      <div class="flex items-center gap-2 text-cyan-400">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+        <span>NEO-TOKYO NODE // ONLINE</span>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+</html>
