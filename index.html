@@ -1,4 +1,17 @@
 <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pen</title>
+  </head>
+  <body>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -190,7 +203,7 @@
         <span class="text-slate-700">|</span>
         <div>CLEARANCE: <strong class="text-cyan-400">LEVEL 2</strong></div>
         <span class="text-slate-700">|</span>
-        <div>PROGRESS: <strong class="text-pink-400">3 / 16</strong></div>
+        <div>PROGRESS: <strong class="text-pink-400">4 / 16</strong></div>
       </div>
     </header>
 
@@ -260,18 +273,26 @@
         </div>
       </a>
 
-      <!-- Mission 04 (Locked) -->
-      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+      <!-- ==================== 按鈕 4 (已解鎖) ==================== -->
+      <a href="w4/index.html" class="unlocked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32 group">
         <div class="flex justify-between items-start">
-          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 04</span>
-          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+          <span class="card-badge text-[10px] sm:text-xs font-bold tracking-wider px-2 py-0.5 bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 rounded-sm transition-colors">
+            MISSION 04
+          </span>
+          <span class="text-[10px] text-cyan-400 font-mono flex items-center gap-1">
+            <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span> [ 解放済み ]
+          </span>
         </div>
         <div class="my-auto">
-          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 4 - 未解鎖</h2>
-          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+          <h2 class="card-title text-xs sm:text-base font-bold text-white transition-colors duration-200 line-clamp-2">
+            Week 4-悄悄話 <span class="block text-[10px] sm:text-xs text-slate-400 font-normal font-mono">(秘密のメッセージ)</span>
+          </h2>
         </div>
-        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
-      </div>
+        <div class="flex justify-between items-center text-[10px] text-cyan-400 font-mono border-t border-cyan-900/40 pt-1.5">
+          <span>ACCESS SYSTEM &gt;&gt;</span>
+          <span class="group-hover:translate-x-1 transition-transform">→</span>
+        </div>
+      </a>
 
       <!-- Mission 05 (Locked) -->
       <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
