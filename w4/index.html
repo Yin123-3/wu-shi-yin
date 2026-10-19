@@ -16,492 +16,454 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>朋友對我的動態留言板 - 哆啦A夢特別版</title>
+  <title>CYBERPUNK PORTFOLIO // ネオ東京</title>
   
-  <!-- 載入 Google Fonts 圓潤可愛字體 -->
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Orbitron & Noto Sans JP -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  
   <style>
-    /* ==========================================================================
-       【控制區域 1：視覺主題顏色設定 (CSS Variables)】
-       你可以修改這裡的 HEX 碼來調整網頁整體配色
-       ========================================================================== */
-    :root {
-      --dora-blue: #0096e6;        /* 主色：哆啦藍 */
-      --dora-blue-dark: #006eb8;   /* 輔助色：深哆啦藍 */
-      --dora-red: #e60012;         /* 亮點色：項圈/鼻子紅 */
-      --dora-yellow: #ffde00;      /* 聚焦/發光色：鈴鐺黃 */
-      --dora-white: #ffffff;       /* 卡片背景色：口袋白 */
-      --dora-dark: #2c3e50;        /* 文字與外框色：濃黑 */
-      --bg-dots: #7ecaff;          /* 背景圓點裝飾色 */
-    }
-
-    /* ==========================================================================
-       全域基礎樣式
-       ========================================================================== */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    /* 基礎字體與背景設定 */
     body {
-      font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
-      background-color: var(--dora-blue);
-      /* 經典可愛的水玉圓點背景 */
-      background-image: radial-gradient(var(--bg-dots) 20%, transparent 20%),
-                        radial-gradient(var(--bg-dots) 20%, transparent 20%);
-      background-size: 40px 40px;
-      background-position: 0 0, 20px 20px;
-      color: var(--dora-dark);
-      padding: 30px 15px;
-      min-height: 100vh;
+      font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
+      background-color: #070612;
+      color: #00f0ff;
       overflow-x: hidden;
     }
 
-    /* 頁首 Header 區塊 */
-    header {
-      text-align: center;
-      margin-bottom: 35px;
+    /* 網格與夜空霓虹背景 */
+    .cyber-bg {
+      background: 
+        radial-gradient(circle at 50% 15%, rgba(255, 0, 128, 0.18) 0%, transparent 65%),
+        radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.12) 0%, transparent 55%),
+        linear-gradient(rgba(18, 14, 38, 0.95), rgba(7, 6, 18, 0.98)),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px, 32px 32px;
     }
 
-    .title-box {
-      display: inline-block;
-      background-color: var(--dora-red);
-      color: var(--dora-white);
-      padding: 12px 35px;
-      border-radius: 50px;
-      border: 4px solid var(--dora-dark);
-      box-shadow: 0px 6px 0px var(--dora-dark);
+    /* 復古 CRT 掃描線 Overlay */
+    .scanlines {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.3) 50%
+      );
+      background-size: 100% 4px;
+      z-index: 50;
+      opacity: 0.7;
+    }
+
+    /* 霓虹文字陰影 */
+    .neon-text-cyan {
+      text-shadow: 0 0 6px #00f0ff, 0 0 18px rgba(0, 240, 255, 0.6), 0 0 35px rgba(0, 240, 255, 0.4);
+    }
+    .neon-text-pink {
+      text-shadow: 0 0 6px #ff007f, 0 0 18px rgba(255, 0, 127, 0.6), 0 0 35px rgba(255, 0, 127, 0.4);
+    }
+
+    /* 賽博科技邊框切角 (Polygon Clip-path) */
+    .cyber-clip {
+      clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+    }
+    .cyber-clip-avatar {
+      clip-path: polygon(22% 0, 78% 0, 100% 22%, 100% 78%, 78% 100%, 22% 100%, 0 78%, 0 22%);
+    }
+
+    /* 已解鎖卡片 (Cyan & Magenta Glow Effect) */
+    .unlocked-card {
+      background: rgba(12, 18, 36, 0.85);
+      border: 1px solid #00f0ff;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.25), inset 0 0 15px rgba(0, 240, 255, 0.12);
+      transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
       position: relative;
+      overflow: hidden;
     }
 
-    h1 {
-      font-size: 2.2rem;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-shadow: 2px 2px 0px var(--dora-dark);
-    }
-
-    /* 標題下方的鈴鐺小裝飾 */
-    .title-box::after {
-      content: '🔔';
+    .unlocked-card::before {
+      content: '';
       position: absolute;
-      bottom: -22px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 1.5rem;
-      background: var(--dora-yellow);
-      width: 42px;
-      height: 42px;
-      line-height: 38px;
-      border-radius: 50%;
-      border: 3px solid var(--dora-dark);
-      box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.35), transparent);
+      transition: 0.6s;
     }
 
-    .subtitle {
-      margin-top: 25px;
-      color: var(--dora-white);
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    .unlocked-card:hover::before {
+      left: 100%;
     }
 
-    /* ==========================================================================
-       【需求：酷炫載入中動畫】竹蜻蜓旋轉效果
-       ========================================================================== */
-    #loading-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 80px 0;
+    .unlocked-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      border-color: #ff007f;
+      box-shadow: 0 0 25px rgba(255, 0, 127, 0.75), inset 0 0 20px rgba(255, 0, 127, 0.3);
     }
 
-    .bamboo-copter {
+    .unlocked-card:hover .card-title {
+      color: #ff007f;
+      text-shadow: 0 0 10px #ff007f;
+    }
+
+    .unlocked-card:hover .card-badge {
+      background-color: #ff007f;
+      color: #ffffff;
+      box-shadow: 0 0 12px #ff007f;
+    }
+
+    /* 未解鎖灰色卡片 */
+    .locked-card {
+      background: rgba(14, 16, 24, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #4b5563;
+      cursor: not-allowed;
       position: relative;
-      width: 80px;
-      height: 80px;
-      margin-bottom: 20px;
+      user-select: none;
+      transition: all 0.3s ease;
     }
 
-    /* 螺旋槳 */
-    .blade {
-      position: absolute;
-      top: 15px;
-      left: 5px;
-      width: 70px;
-      height: 12px;
-      background-color: var(--dora-yellow);
-      border: 3px solid var(--dora-dark);
-      border-radius: 10px;
-      animation: spinBlade 0.4s linear infinite;
+    .locked-card:hover {
+      border-color: rgba(239, 68, 68, 0.4);
+      background: rgba(22, 18, 28, 0.75);
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
     }
 
-    /* 支架 */
-    .stem {
-      position: absolute;
-      top: 24px;
-      left: 36px;
-      width: 8px;
-      height: 35px;
-      background-color: var(--dora-yellow);
-      border: 3px solid var(--dora-dark);
+    /* 呼吸燈動畫 */
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.03); }
+    }
+    .pulse-animation {
+      animation: pulse-glow 3s infinite ease-in-out;
     }
 
-    @keyframes spinBlade {
-      0% { transform: rotateY(0deg); }
-      50% { transform: rotateY(180deg); }
-      100% { transform: rotateY(360deg); }
-    }
-
-    .loading-text {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--dora-white);
-      background: var(--dora-dark);
-      padding: 8px 24px;
-      border-radius: 20px;
-      letter-spacing: 2px;
-      animation: pulseText 1.2s infinite ease-in-out;
-    }
-
-    @keyframes pulseText {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(0.95); opacity: 0.7; }
-    }
-
-    /* ==========================================================================
-       【需求：瀑布流排版 (Masonry Layout)】
-       ========================================================================== */
-    .masonry-wall {
-      max-width: 1200px;
-      margin: 0 auto;
-      /* 使用 CSS column-count 製作錯落排列 */
-      column-count: 3;
-      column-gap: 20px;
-    }
-
-    /* 響應式欄數調整 */
-    @media (max-width: 900px) {
-      .masonry-wall { column-count: 2; }
-    }
-    @media (max-width: 600px) {
-      .masonry-wall { column-count: 1; }
-    }
-
-    /* ==========================================================================
-       留言卡片基礎樣式
-       ========================================================================== */
-    .message-card {
-      background-color: var(--dora-white);
-      border: 4px solid var(--dora-dark);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 20px;
-      /* 防止卡片在瀑布流中被拆斷到下一欄 */
-      break-inside: avoid;
-      box-shadow: 6px 6px 0px var(--dora-dark);
-      position: relative;
-      
-      /* 平滑漸變過渡設定 (控制 Highlight 動畫的順暢度) */
-      transition: transform 0.5s ease, 
-                  opacity 0.5s ease, 
-                  filter 0.5s ease, 
-                  box-shadow 0.5s ease, 
-                  border-color 0.5s ease;
-      
-      /* 預設非焦點狀態：稍微降低亮度 */
-      opacity: 0.85;
-      filter: grayscale(10%);
-    }
-
-    /* 卡片頭部（暱稱與頭像） */
-    .card-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 12px;
-      border-bottom: 2px dashed #e0e0e0;
-      padding-bottom: 8px;
-    }
-
-    .avatar-icon {
-      width: 36px;
-      height: 36px;
-      background-color: var(--dora-yellow);
-      border: 2px solid var(--dora-dark);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      margin-right: 10px;
-      flex-shrink: 0;
-    }
-
-    .user-name {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--dora-dark);
-      word-break: break-all;
-    }
-
-    /* 卡片留言內文 */
-    .card-content {
-      font-size: 0.98rem;
-      line-height: 1.6;
-      color: #333333;
-      white-space: pre-wrap; /* 保持原留言的換行 */
-      word-break: break-word;
-    }
-
-    .card-time {
-      margin-top: 10px;
-      font-size: 0.75rem;
-      color: #888888;
-      text-align: right;
-    }
-
-    /* ==========================================================================
-       【需求：隨時間輪播特效 (Highlight 效果)】
-       由 JavaScript 動態切換亮起與變暗狀態
-       ========================================================================== */
-
-    /* 1. 當前選中的卡片：放大亮起、外框變紅、發出黃光 */
-    .message-card.highlight {
-      opacity: 1 !important;
-      filter: grayscale(0%) blur(0px) !important;
-      transform: scale(1.08) translateY(-6px);
-      border-color: var(--dora-red) !important;
-      box-shadow: 0 0 25px var(--dora-yellow), 10px 10px 0px var(--dora-dark);
-      z-index: 10;
-    }
-
-    /* 2. 其他未選中的卡片：變暗、微模糊 */
-    .has-active-highlight .message-card:not(.highlight) {
-      opacity: 0.35;
-      filter: blur(1.5px) grayscale(40%);
-      transform: scale(0.96);
+    /* HUD 視覺割線 */
+    .hud-line {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00f0ff, #ff007f, transparent);
     }
   </style>
 </head>
-<body>
+<body class="cyber-bg min-h-screen relative flex flex-col justify-between p-4 sm:p-8">
 
-  <!-- 標題區域 -->
-  <header>
-    <div class="title-box">
-      <h1>朋友對我的動態留言板</h1>
-    </div>
-    <div class="subtitle">來自四次元口袋的祝福訊息 ✨</div>
-  </header>
+  <!-- 螢幕掃描線 Overlay -->
+  <div class="scanlines"></div>
 
-  <!-- 載入中酷炫動畫 -->
-  <div id="loading-container">
-    <div class="bamboo-copter">
-      <div class="blade"></div>
-      <div class="stem"></div>
-    </div>
-    <div class="loading-text">讀取留言中⋯⋯</div>
+  <div class="max-w-6xl mx-auto w-full z-10 my-auto">
+    
+    <!-- 頁首與個人資料區域 -->
+    <header class="flex flex-col items-center text-center mb-10 relative">
+      
+      <!-- 頂部 HUD 裝飾條 -->
+      <div class="w-full max-w-md hud-line mb-6"></div>
+
+      <!-- 大頭貼區域 -->
+      <div class="relative group mb-4">
+        <!-- 發光旋轉外框裝飾 -->
+        <div class="absolute -inset-2 rounded-full bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 blur-md opacity-80 group-hover:opacity-100 transition duration-1000 pulse-animation"></div>
+        
+        <!-- 頭像容器 -->
+        <div class="relative w-28 h-28 sm:w-36 sm:h-36 bg-slate-900 border-2 border-cyan-400 cyber-clip-avatar p-1 flex items-center justify-center">
+          <img 
+            src="https://i.postimg.cc/TwcB6HSL/2a-Obo-R3Myk7GMr-Gxb-H9Xq-Rs3Ocz-LHIIQM1p-SM1rs.jpg" 
+            alt="Cyberpunk Avatar" 
+            class="w-full h-full object-cover cyber-clip-avatar filter brightness-110 contrast-125"
+            onerror="this.src='https://placehold.co/300x300/070612/00f0ff?text=AVATAR'"
+          >
+          <!-- 角落科技標籤 -->
+          <span class="absolute bottom-1 right-2 text-[9px] bg-cyan-500 text-black px-1 font-bold tracking-tighter">SYS.VER 2.0.77</span>
+        </div>
+      </div>
+
+      <!-- 名字與標題 -->
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-widest text-white mb-2 neon-text-cyan flex items-center gap-2">
+        <span class="text-pink-500">//</span> 作品集 PORTFOLIO <span class="text-xs sm:text-sm text-cyan-300 font-normal border border-cyan-500/40 px-2 py-0.5 rounded">ONLINE</span>
+      </h1>
+      
+      <!-- 日文副標題 & 任務指示 -->
+      <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-300 font-medium tracking-wider">
+        <span class="text-pink-400 font-bold">ネオ東京 // HUB</span>
+        <span class="text-slate-600">|</span>
+        <span class="text-cyan-400 bg-cyan-950/70 border border-cyan-800 px-3 py-1 rounded-sm shadow-[0_0_12px_rgba(0,240,255,0.25)]">
+          [ ミッション選択 ]
+        </span>
+      </div>
+
+      <!-- 底部 HUD 狀態資訊 -->
+      <div class="mt-6 flex items-center gap-3 sm:gap-5 text-[10px] sm:text-xs text-slate-400 border-t border-b border-cyan-900/60 py-1.5 px-6 bg-slate-950/50 backdrop-blur-sm">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>STATUS: <strong class="text-emerald-400">READY</strong></span>
+        </div>
+        <span class="text-slate-700">|</span>
+        <div>CLEARANCE: <strong class="text-cyan-400">LEVEL 2</strong></div>
+        <span class="text-slate-700">|</span>
+        <div>PROGRESS: <strong class="text-pink-400">4 / 16</strong></div>
+      </div>
+    </header>
+
+    <!-- 16 個任務按鈕網格區域 (手機版強制適應雙欄 grid-cols-2) -->
+    <main class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+
+      <!-- ==================== 按鈕 1 (已解鎖) ==================== -->
+      <a href="w1/index.html" class="unlocked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32 group">
+        <div class="flex justify-between items-start">
+          <span class="card-badge text-[10px] sm:text-xs font-bold tracking-wider px-2 py-0.5 bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 rounded-sm transition-colors">
+            MISSION 01
+          </span>
+          <span class="text-[10px] text-cyan-400 font-mono flex items-center gap-1">
+            <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span> [ 解放済み ]
+          </span>
+        </div>
+        <div class="my-auto">
+          <h2 class="card-title text-xs sm:text-base font-bold text-white transition-colors duration-200 line-clamp-2">
+            Week 1-數位名片 <span class="block text-[10px] sm:text-xs text-slate-400 font-normal font-mono">(デジタル名刺)</span>
+          </h2>
+        </div>
+        <div class="flex justify-between items-center text-[10px] text-cyan-400 font-mono border-t border-cyan-900/40 pt-1.5">
+          <span>ACCESS SYSTEM &gt;&gt;</span>
+          <span class="group-hover:translate-x-1 transition-transform">→</span>
+        </div>
+      </a>
+
+      <!-- ==================== 按鈕 2 (已解鎖) ==================== -->
+      <a href="w2/index.html" class="unlocked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32 group">
+        <div class="flex justify-between items-start">
+          <span class="card-badge text-[10px] sm:text-xs font-bold tracking-wider px-2 py-0.5 bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 rounded-sm transition-colors">
+            MISSION 02
+          </span>
+          <span class="text-[10px] text-cyan-400 font-mono flex items-center gap-1">
+            <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span> [ 解放済み ]
+          </span>
+        </div>
+        <div class="my-auto">
+          <h2 class="card-title text-xs sm:text-base font-bold text-white transition-colors duration-200 line-clamp-2">
+            Week 2-今天吃甚麼？ <span class="block text-[10px] sm:text-xs text-slate-400 font-normal font-mono">(今日何食べる？)</span>
+          </h2>
+        </div>
+        <div class="flex justify-between items-center text-[10px] text-cyan-400 font-mono border-t border-cyan-900/40 pt-1.5">
+          <span>ACCESS SYSTEM &gt;&gt;</span>
+          <span class="group-hover:translate-x-1 transition-transform">→</span>
+        </div>
+      </a>
+
+      <!-- ==================== 按鈕 3 (已解鎖) ==================== -->
+      <a href="w3/index.html" class="unlocked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32 group">
+        <div class="flex justify-between items-start">
+          <span class="card-badge text-[10px] sm:text-xs font-bold tracking-wider px-2 py-0.5 bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 rounded-sm transition-colors">
+            MISSION 03
+          </span>
+          <span class="text-[10px] text-cyan-400 font-mono flex items-center gap-1">
+            <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span> [ 解放済み ]
+          </span>
+        </div>
+        <div class="my-auto">
+          <h2 class="card-title text-xs sm:text-base font-bold text-white transition-colors duration-200 line-clamp-2">
+            Week 3-迷因產生器 <span class="block text-[10px] sm:text-xs text-slate-400 font-normal font-mono">(ミームジェネレーター)</span>
+          </h2>
+        </div>
+        <div class="flex justify-between items-center text-[10px] text-cyan-400 font-mono border-t border-cyan-900/40 pt-1.5">
+          <span>ACCESS SYSTEM &gt;&gt;</span>
+          <span class="group-hover:translate-x-1 transition-transform">→</span>
+        </div>
+      </a>
+
+      <!-- ==================== 按鈕 4 (已解鎖) ==================== -->
+      <a href="w4/index.html" class="unlocked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32 group">
+        <div class="flex justify-between items-start">
+          <span class="card-badge text-[10px] sm:text-xs font-bold tracking-wider px-2 py-0.5 bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 rounded-sm transition-colors">
+            MISSION 04
+          </span>
+          <span class="text-[10px] text-cyan-400 font-mono flex items-center gap-1">
+            <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span> [ 解放済み ]
+          </span>
+        </div>
+        <div class="my-auto">
+          <h2 class="card-title text-xs sm:text-base font-bold text-white transition-colors duration-200 line-clamp-2">
+            Week 4-悄悄話 <span class="block text-[10px] sm:text-xs text-slate-400 font-normal font-mono">(秘密のメッセージ)</span>
+          </h2>
+        </div>
+        <div class="flex justify-between items-center text-[10px] text-cyan-400 font-mono border-t border-cyan-900/40 pt-1.5">
+          <span>ACCESS SYSTEM &gt;&gt;</span>
+          <span class="group-hover:translate-x-1 transition-transform">→</span>
+        </div>
+      </a>
+
+      <!-- Mission 05 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 05</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 5 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 06 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 06</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 6 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 07 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 07</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 7 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 08 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 08</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 8 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 09 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 09</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 9 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 10 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 10</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 10 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 11 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 11</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 11 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 12 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 12</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 12 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 13 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 13</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 13 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 14 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 14</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 14 - 未解鎖</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 15 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 15</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 15 - 未解鎖</h2>
+          <p class="text-[11px] text-slate-600 font-mono">(ロックされています)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">LOCKED // ACCESS DENIED</div>
+      </div>
+
+      <!-- Mission 16 (Locked) -->
+      <div class="locked-card cyber-clip p-3 sm:p-4 flex flex-col justify-between h-28 sm:h-32">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] font-bold text-slate-500 border border-slate-700 px-1.5 py-0.5 rounded-sm">MISSION 16</span>
+          <span class="text-[10px] text-slate-500 font-mono">🔒 未解放</span>
+        </div>
+        <div class="my-auto">
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-400">Week 16 - 期末專案</h2>
+          <p class="text-[10px] sm:text-[11px] text-slate-600 font-mono">(最終ミッション)</p>
+        </div>
+        <div class="text-[10px] text-slate-600 font-mono border-t border-slate-800/60 pt-1.5">FINAL MISSION // LOCKED</div>
+      </div>
+
+    </main>
+
+    <!-- 頁尾資訊 -->
+    <footer class="mt-12 text-center text-xs text-slate-500 font-mono flex flex-col sm:flex-row justify-between items-center border-t border-cyan-900/40 pt-4 gap-2">
+      <div>
+        &copy; 2026 CYBERPUNK PORTFOLIO SYSTEM. ALL RIGHTS RESERVED.
+      </div>
+      <div class="flex items-center gap-2 text-cyan-400">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+        <span>NEO-TOKYO NODE // ONLINE</span>
+      </div>
+    </footer>
+
   </div>
 
-  <!-- 瀑布流留言牆容器 -->
-  <main class="masonry-wall" id="wall-container"></main>
-
-  <script>
-    /* ==========================================================================
-       【控制區域 2：JavaScript 參數與設定】
-       ========================================================================== */
-    
-    // Google 試算表 CSV 網址
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTSZhCslPmY2QTDwhW7kR3BNAf4gL4WjoNaLf9UpJsb4_ajX218xUgl2fXJf3KeHjxEmhGqjfN7Pi2n/pub?output=csv';
-
-    // 【輪播秒數設定】每隔多少毫秒切換下一張卡片（3000ms = 3 秒）
-    const CAROUSEL_SPEED = 3000;
-
-    // 隨機頭像圖示選單（哆啦A夢經典元素）
-    const AVATAR_ICONS = ['🔔', '🚪', '🚁', '🤖', '🌟', '🍩', '🎈', '✨'];
-
-    // 全域變數
-    let messageList = [];      // 儲存解析後的留言陣列
-    let currentFocusIndex = 0; // 目前焦點卡片的索引
-    let carouselTimer = null;  // 定時器物件
-
-    /* ==========================================================================
-       1. CSV 解析邏輯（妥善處理包含逗號與換行字元的留言內容）
-       ========================================================================== */
-    function parseCSVData(rawCSV) {
-      const rows = [];
-      let currentRow = [];
-      let currentCell = '';
-      let insideQuotes = false;
-
-      for (let i = 0; i < rawCSV.length; i++) {
-        const char = rawCSV[i];
-        const nextChar = rawCSV[i + 1];
-
-        if (char === '"') {
-          // 處理雙引號轉義
-          if (insideQuotes && nextChar === '"') {
-            currentCell += '"';
-            i++;
-          } else {
-            insideQuotes = !insideQuotes;
-          }
-        } else if (char === ',' && !insideQuotes) {
-          currentRow.push(currentCell.trim());
-          currentCell = '';
-        } else if ((char === '\r' || char === '\n') && !insideQuotes) {
-          if (char === '\r' && nextChar === '\n') i++; // 跳過 \r\n 中的 \n
-          currentRow.push(currentCell.trim());
-          if (currentRow.some(cell => cell.length > 0)) {
-            rows.push(currentRow);
-          }
-          currentRow = [];
-          currentCell = '';
-        } else {
-          currentCell += char;
-        }
-      }
-      
-      if (currentCell.length > 0 || currentRow.length > 0) {
-        currentRow.push(currentCell.trim());
-        rows.push(currentRow);
-      }
-
-      // 跳過表頭 (第一橫列)，對應欄位：[0]時間戳記, [1]名字, [2]留言
-      return rows.slice(1).map(row => ({
-        timestamp: row[0] || '',
-        name: row[1] || '匿名朋友',
-        content: row[2] || (row[1] ? row[1] : '（沒有填寫留言）')
-      }));
-    }
-
-    /* ==========================================================================
-       2. 動態生成留言卡片 (渲染 DOM)
-       ========================================================================== */
-    function createCardsUI(data) {
-      const container = document.getElementById('wall-container');
-      container.innerHTML = ''; // 清空容器
-
-      data.forEach((item, index) => {
-        // 隨機選一個頭像圖表
-        const randomIcon = AVATAR_ICONS[Math.floor(Math.random() * AVATAR_ICONS.length)];
-
-        // 建立 Card HTML 元素
-        const cardNode = document.createElement('div');
-        cardNode.className = 'message-card';
-        cardNode.setAttribute('data-card-id', index);
-
-        cardNode.innerHTML = `
-          <div class="card-header">
-            <div class="avatar-icon">${randomIcon}</div>
-            <div class="user-name">${sanitizeHTML(item.name)}</div>
-          </div>
-          <div class="card-content">${sanitizeHTML(item.content)}</div>
-          ${item.timestamp ? `<div class="card-time">\${sanitizeHTML(item.timestamp)}</div>` : ''}
-        `;
-
-        container.appendChild(cardNode);
-      });
-    }
-
-    // HTML 轉義，預防 XSS 攻擊
-    function sanitizeHTML(str) {
-      return str.replace(/[&<>"']/g, match => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-      }[match]));
-    }
-
-    /* ==========================================================================
-       3. 隨時間輪播特效 (setInterval 控制 Highlight)
-       ========================================================================== */
-    function startHighlightsCarousel() {
-      const cards = document.querySelectorAll('.message-card');
-      const container = document.getElementById('wall-container');
-
-      if (cards.length === 0) return;
-
-      // 啟用全域 Highlight 模式狀態
-      container.classList.add('has-active-highlight');
-
-      // 立即執行第一次 highlight
-      triggerCardHighlight(cards, currentFocusIndex);
-
-      // 設定每隔 CAROUSEL_SPEED (3秒) 自動輪播
-      carouselTimer = setInterval(() => {
-        // 索引值順序加 1，到底後循環回到 0
-        currentFocusIndex = (currentFocusIndex + 1) % cards.length;
-        triggerCardHighlight(cards, currentFocusIndex);
-      }, CAROUSEL_SPEED);
-    }
-
-    // 單張卡片亮起處理
-    function triggerCardHighlight(cards, focusIndex) {
-      cards.forEach((card, idx) => {
-        if (idx === focusIndex) {
-          card.classList.add('highlight');
-          
-          // 自動平滑捲動，確保當前 Highlight 卡片處於可見視窗中
-          card.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest'
-          });
-        } else {
-          card.classList.remove('highlight');
-        }
-      });
-    }
-
-    /* ==========================================================================
-       4. 主程式初始化：使用 fetch 取得 CSV 資料
-       ========================================================================== */
-    async function initBoard() {
-      const loadingBox = document.getElementById('loading-container');
-
-      try {
-        // 使用 fetch 取得試算表 CSV 資料
-        const response = await fetch(CSV_URL);
-        if (!response.ok) throw new Error('資料讀取失敗');
-
-        const csvRawText = await response.text();
-
-        // 解析 CSV 資料
-        messageList = parseCSVData(csvRawText);
-
-        // 隱藏載入中動畫
-        loadingBox.style.display = 'none';
-
-        if (messageList.length === 0) {
-          document.getElementById('wall-container').innerHTML = 
-            '<div style="text-align:center; color:white; width:100%;">目前還沒有任何留言喔！</div>';
-          return;
-        }
-
-        // 1. 動態生成卡片
-        createCardsUI(messageList);
-
-        // 2. 啟動 3 秒輪播亮起特效
-        startHighlightsCarousel();
-
-      } catch (err) {
-        console.error('初始化留言板錯誤:', err);
-        loadingBox.innerHTML = `
-          <div class="loading-text" style="background: var(--dora-red);">
-            ❌ 載入失敗，請檢查網址或試算表發布設定。
-          </div>
-        `;
-      }
-    }
-
-    // 頁面加載完成後觸發
-    window.addEventListener('DOMContentLoaded', initBoard);
-  </script>
 </body>
 </html>
