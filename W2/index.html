@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今天吃什麼？隨機抽籤機</title>
+    
+    <!-- 內嵌 CSS 樣式 -->
+    <style>
+        /* 重置基礎樣式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, '微軟正黑體';
+        }
+
+        /* 全頁背景：活潑可愛的暖黃/橘色漸層 */
+        body {
+            background: linear-gradient(135deg, #fff3b0 0%, #ffe3a8 50%, #ffcbf2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* 中央主卡片 */
+        .card {
+            background-color: #ffffff;
+            border: 4px solid #ff9f1c;
+            border-radius: 28px;
+            padding: 40px 28px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 16px 32px rgba(255, 159, 28, 0.25);
+        }
+
+        /* 上方可愛小標籤 */
+        .tag {
+            display: inline-block;
+            background-color: #ffe5ec;
+            color: #ff477e;
+            font-weight: bold;
+            font-size: 13px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* 主標題樣式 */
+        h1 {
+            color: #e76f51;
+            font-size: 28px;
+            margin-bottom: 20px;
+            min-height: 48px;
+            line-height: 1.3;
+        }
+
+        /* 圖片顯示外框 */
+        .image-container {
+            width: 100%;
+            height: 220px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            border: 3px solid #ffbf69;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 隱藏元素用 class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* 按鈕容器 */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* 通用按鈕基礎 */
+        button, a.secondary-btn {
+            display: inline-block;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 16px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        /* 主要抽籤按鈕 (立體感黃橘色) */
+        .primary-btn {
+            background-color: #ff9f1c;
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 6px 0px #e07a5f;
+        }
+
+        .primary-btn:hover {
+            background-color: #ffbf69;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0px #e07a5f;
+        }
+
+        .primary-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px #e07a5f;
+        }
+
+        /* Google 地圖按鈕 (亮麗青綠色) */
+        .secondary-btn {
+            background-color: #2ec4b6;
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 6px 0px #0f9f90;
+        }
+
+        .secondary-btn:hover {
+            background-color: #3cbcc3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0px #0f9f90;
+        }
+
+        .secondary-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px #0f9f90;
+        }
+
+        /* 彈跳驚喜動畫 (Bounce Animation) */
+        .bounce {
+            animation: bounceEffect 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes bounceEffect {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(-40px);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1) translateY(10px);
+            }
+            70% {
+                transform: scale(0.95) translateY(-5px);
+            }
+            100% {
+                transform: scale(1) translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 卡片主要容器 -->
+    <main class="card">
+        <!-- 頂部標籤與地址顯示 -->
+        <div class="tag">📍 楠梓惠民路342號 美食抽籤</div>
+
+        <!-- 畫面中間的大標題 -->
+        <h1 id="food-title">今天吃什麼？</h1>
+
+        <!-- 圖片顯示區域 (預設先隱藏) -->
+        <div id="image-container" class="image-container hidden">
+            <img id="food-img" src="" alt="食物照片">
+        </div>
+
+        <!-- 按鈕區塊 -->
+        <div class="button-group">
+            <button id="draw-btn" class="primary-btn">🎰 點我抽籤</button>
+            <a id="map-btn" href="#" target="_blank" class="secondary-btn hidden">📍 馬上出發 (Google Maps)</a>
+        </div>
+    </main>
+
+    <!-- 內嵌 JavaScript 邏輯 -->
+    <script>
+        // 確保 DOM 結構載入完成後才執行
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // 1. 設定目標地址與資訊
+            const storeAddress = {
+                fullAddress: "811高雄市楠梓區仁昌里惠民路342號"
+            };
+
+            // 2. 設定 5 種美食資料庫
+            const foodList = [
+                {
+                    name: "Cơm Sườn (排骨飯)",
+                    image: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=600&q=80",
+                    searchKey: "cơm sườn 排骨飯"
+                },
+                {
+                    name: "Miến Gà (雞肉粉)",
+                    image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80",
+                    searchKey: "miến gà 雞肉粉"
+                },
+                {
+                    name: "Mì Trộn (乾拌麵)",
+                    image: "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=600&q=80",
+                    searchKey: "mì trộn 乾拌麵"
+                },
+                {
+                    name: "Phở Hải Sản (海鮮河粉)",
+                    image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=600&q=80",
+                    searchKey: "phở hải sản 海鮮河粉"
+                },
+                {
+                    name: "Bánh Xèo (越南煎餅)",
+                    image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80",
+                    searchKey: "bánh xèo 越南煎餅"
+                }
+            ];
+
+            // 3. 取得 HTML 元素
+            const foodTitle = document.getElementById('food-title');
+            const foodImg = document.getElementById('food-img');
+            const imageContainer = document.getElementById('image-container');
+            const drawBtn = document.getElementById('draw-btn');
+            const mapBtn = document.getElementById('map-btn');
+
+            // 4. 按鈕點擊抽籤邏輯
+            drawBtn.addEventListener('click', () => {
+                // 隨機抽選一項
+                const randomIndex = Math.floor(Math.random() * foodList.length);
+                const selectedFood = foodList[randomIndex];
+
+                // 重置動畫效果
+                foodTitle.classList.remove('bounce');
+                imageContainer.classList.remove('bounce');
+
+                // 強制重繪以重設動畫
+                void foodTitle.offsetWidth;
+
+                // 更新畫面內容
+                foodTitle.innerText = `🎉 今天就吃：${selectedFood.name}！`;
+                foodImg.src = selectedFood.image;
+                foodImg.alt = selectedFood.name;
+
+                // 綁定特定地址的 Google Maps 搜尋 URL
+                const googleMapUrl = `https://www.google.com/maps/search/${encodeURIComponent(storeAddress.fullAddress + ' ' + selectedFood.searchKey)}`;
+                mapBtn.href = googleMapUrl;
+
+                // 顯示圖片與地圖按鈕
+                imageContainer.classList.remove('hidden');
+                mapBtn.classList.remove('hidden');
+
+                // 觸發彈跳動畫
+                foodTitle.classList.add('bounce');
+                imageContainer.classList.add('bounce');
+            });
+
+        });
+    </script>
+</body>
+</html>
