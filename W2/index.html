@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>今天吃什麼？隨機抽籤機</title>
-    
+
     <!-- 內嵌 CSS 樣式 -->
     <style>
-        /* 重置基礎樣式 */
+        /* 基礎樣式重置 */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -15,7 +15,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, '微軟正黑體';
         }
 
-        /* 全頁背景：活潑可愛的暖黃/橘色漸層 */
+        /* 頁面背景：活潑可愛的暖黃/橘色漸層 */
         body {
             background: linear-gradient(135deg, #fff3b0 0%, #ffe3a8 50%, #ffcbf2 100%);
             min-height: 100vh;
@@ -37,7 +37,7 @@
             box-shadow: 0 16px 32px rgba(255, 159, 28, 0.25);
         }
 
-        /* 上方可愛小標籤 */
+        /* 頂部標籤 */
         .tag {
             display: inline-block;
             background-color: #ffe5ec;
@@ -49,7 +49,7 @@
             margin-bottom: 20px;
         }
 
-        /* 主標題樣式 */
+        /* 大標題樣式 */
         h1 {
             color: #e76f51;
             font-size: 28px;
@@ -58,7 +58,7 @@
             line-height: 1.3;
         }
 
-        /* 圖片顯示外框 */
+        /* 圖片容器 */
         .image-container {
             width: 100%;
             height: 220px;
@@ -75,7 +75,7 @@
             object-fit: cover;
         }
 
-        /* 隱藏元素用 class */
+        /* 隱藏元素屬性 */
         .hidden {
             display: none !important;
         }
@@ -100,7 +100,7 @@
             text-align: center;
         }
 
-        /* 主要抽籤按鈕 (立體感黃橘色) */
+        /* 主要抽籤按鈕 */
         .primary-btn {
             background-color: #ff9f1c;
             color: #ffffff;
@@ -119,7 +119,7 @@
             box-shadow: 0 2px 0px #e07a5f;
         }
 
-        /* Google 地圖按鈕 (亮麗青綠色) */
+        /* Google 地圖導航按鈕 */
         .secondary-btn {
             background-color: #2ec4b6;
             color: #ffffff;
@@ -138,7 +138,7 @@
             box-shadow: 0 2px 0px #0f9f90;
         }
 
-        /* 彈跳驚喜動畫 (Bounce Animation) */
+        /* 彈跳驚喜動畫 */
         .bounce {
             animation: bounceEffect 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -163,20 +163,15 @@
 </head>
 <body>
 
-    <!-- 卡片主要容器 -->
+    <!-- 主要內容卡片 -->
     <main class="card">
-        <!-- 頂部標籤與地址顯示 -->
         <div class="tag">📍 楠梓惠民路342號 美食抽籤</div>
-
-        <!-- 畫面中間的大標題 -->
         <h1 id="food-title">今天吃什麼？</h1>
 
-        <!-- 圖片顯示區域 (預設先隱藏) -->
         <div id="image-container" class="image-container hidden">
             <img id="food-img" src="" alt="食物照片">
         </div>
 
-        <!-- 按鈕區塊 -->
         <div class="button-group">
             <button id="draw-btn" class="primary-btn">🎰 點我抽籤</button>
             <a id="map-btn" href="#" target="_blank" class="secondary-btn hidden">📍 馬上出發 (Google Maps)</a>
@@ -185,15 +180,14 @@
 
     <!-- 內嵌 JavaScript 邏輯 -->
     <script>
-        // 確保 DOM 結構載入完成後才執行
         document.addEventListener('DOMContentLoaded', () => {
 
-            // 1. 設定目標地址與資訊
+            // 1. 設定指定搜尋地址
             const storeAddress = {
                 fullAddress: "811高雄市楠梓區仁昌里惠民路342號"
             };
 
-            // 2. 設定 5 種美食資料庫
+            // 2. 5 種指定美食清單
             const foodList = [
                 {
                     name: "Cơm Sườn (排骨飯)",
@@ -222,40 +216,39 @@
                 }
             ];
 
-            // 3. 取得 HTML 元素
+            // 3. 取得 DOM 元素
             const foodTitle = document.getElementById('food-title');
             const foodImg = document.getElementById('food-img');
             const imageContainer = document.getElementById('image-container');
             const drawBtn = document.getElementById('draw-btn');
             const mapBtn = document.getElementById('map-btn');
 
-            // 4. 按鈕點擊抽籤邏輯
+            // 4. 點擊抽籤邏輯
             drawBtn.addEventListener('click', () => {
-                // 隨機抽選一項
                 const randomIndex = Math.floor(Math.random() * foodList.length);
                 const selectedFood = foodList[randomIndex];
 
-                // 重置動畫效果
+                // 重置動畫類別
                 foodTitle.classList.remove('bounce');
                 imageContainer.classList.remove('bounce');
 
-                // 強制重繪以重設動畫
+                // 強制重繪觸發動畫
                 void foodTitle.offsetWidth;
 
-                // 更新畫面內容
+                // 更新標題與圖片
                 foodTitle.innerText = `🎉 今天就吃：${selectedFood.name}！`;
                 foodImg.src = selectedFood.image;
                 foodImg.alt = selectedFood.name;
 
-                // 綁定特定地址的 Google Maps 搜尋 URL
+                // 產生結合指定地址與關鍵字的 Google 地圖連結
                 const googleMapUrl = `https://www.google.com/maps/search/${encodeURIComponent(storeAddress.fullAddress + ' ' + selectedFood.searchKey)}`;
                 mapBtn.href = googleMapUrl;
 
-                // 顯示圖片與地圖按鈕
+                // 顯示圖片與導航按鈕
                 imageContainer.classList.remove('hidden');
                 mapBtn.classList.remove('hidden');
 
-                // 觸發彈跳動畫
+                // 加入彈跳動畫效果
                 foodTitle.classList.add('bounce');
                 imageContainer.classList.add('bounce');
             });
