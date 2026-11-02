@@ -1,386 +1,170 @@
 <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pen</title>
+  </head>
+  <body>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CYBERPUNK // PORTFOLIO MISSION SELECT</title>
-  <style>
-    /* ==========================================
-       1. 全局變數與基礎設定 (GLOBAL VARS & RESET)
-       ========================================== */
-    :root {
-      --bg-color: #030308;
-      --card-bg: rgba(12, 16, 28, 0.75);
-      --neon-cyan: #00f3ff;
-      --neon-pink: #ff0055;
-      --neon-yellow: #fcee0a;
-      --locked-color: #4a5568;
-      --locked-bg: rgba(20, 24, 33, 0.6);
-      --text-main: #e2e8f0;
-      --font-family: 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人數位名片</title>
+    
+    <!-- CSS 樣式區（控制外觀與馬卡龍配色） -->
+    <style>
+        /* 1. 全局重設與馬卡龍漸層背景 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffdde1 0%, #ee9ca7 100%);
+            padding: 20px;
+        }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      font-family: var(--font-family);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 40px 20px;
-      overflow-x: hidden;
-      position: relative;
-    }
+        /* 2. 名片主要卡片容器 */
+        .card-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            width: 100%;
+            max-width: 350px;
+            padding: 35px 25px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(238, 156, 167, 0.3);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
 
-    /* 賽博網格與掃描線背景 */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: 
-        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-      background-size: 100% 4px, 6px 100%;
-      pointer-events: none;
-      z-index: 10;
-    }
+        .card-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(238, 156, 167, 0.4);
+        }
 
-    body::after {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: radial-gradient(circle at 50% 30%, rgba(0, 243, 255, 0.08), transparent 70%);
-      pointer-events: none;
-      z-index: -1;
-    }
+        /* 3. 圓形大頭貼外框與圖片 */
+        .avatar-box {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            padding: 5px;
+            background: linear-gradient(45deg, #fbc2eb, #a6c1ee);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
 
-    .container {
-      width: 100%;
-      max-width: 1100px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 1;
-    }
+        .avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            background-color: #fff;
+        }
 
-    /* ==========================================
-       2. 中央大頭貼與個人標題 (PROFILE HEADER)
-       ========================================== */
-    .profile-section {
-      text-align: center;
-      margin-bottom: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+        /* 4. 文字區域 */
+        .name {
+            font-size: 1.5rem;
+            color: #4a4a4a;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
 
-    /* 霓虹相框 */
-    .avatar-wrapper {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      margin-bottom: 20px;
-    }
+        .bio {
+            font-size: 0.95rem;
+            color: #7a7a7a;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
 
-    .avatar-frame {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      padding: 5px;
-      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
-      box-shadow: 0 0 20px rgba(0, 243, 255, 0.5), 0 0 40px rgba(255, 0, 85, 0.3);
-      animation: pulse-glow 3s infinite alternate;
-    }
+        /* 5. 馬卡龍按鈕區塊 */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-    .avatar-img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      background-color: #111;
-      display: block;
-    }
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
 
-    .avatar-tag {
-      position: absolute;
-      bottom: -5px;
-      background: var(--neon-pink);
-      color: #fff;
-      font-size: 10px;
-      font-weight: bold;
-      padding: 2px 8px;
-      border-radius: 4px;
-      letter-spacing: 1px;
-      box-shadow: 0 0 8px var(--neon-pink);
-    }
+        /* 薄荷綠按鈕 (Instagram) */
+        .btn-ig {
+            background-color: #e0f2fe;
+            color: #0284c7;
+        }
 
-    /* 標題文字與 Glitch 效果 */
-    .profile-title {
-      font-size: 2.2rem;
-      font-weight: 900;
-      letter-spacing: 2px;
-      color: #fff;
-      text-transform: uppercase;
-      text-shadow: 0 0 10px var(--neon-cyan);
-      margin-bottom: 5px;
-      position: relative;
-    }
+        .btn-ig:hover {
+            background-color: #bae6fd;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.15);
+        }
 
-    .profile-subtitle {
-      font-size: 1rem;
-      color: var(--neon-yellow);
-      letter-spacing: 3px;
-      font-weight: 600;
-      text-shadow: 0 0 8px rgba(252, 238, 42, 0.6);
-    }
+        /* 蜜桃粉按鈕 (Email) */
+        .btn-email {
+            background-color: #fce7f3;
+            color: #db2777;
+        }
 
-    /* ==========================================
-       3. 16 宮格任務選單 (MISSION GRID)
-       ========================================== */
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      width: 100%;
-    }
+        .btn-email:hover {
+            background-color: #fbcfe8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(219, 39, 119, 0.15);
+        }
 
-    /* 卡片基礎樣式 */
-    .card {
-      position: relative;
-      background: var(--card-bg);
-      border: 1px solid rgba(0, 243, 255, 0.3);
-      border-radius: 8px;
-      padding: 20px 15px;
-      text-decoration: none;
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 110px;
-      backdrop-filter: blur(5px);
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-    }
-
-    /* 已解鎖卡片 (UNLOCKED) */
-    .card.unlocked {
-      cursor: pointer;
-      border-color: var(--neon-cyan);
-      box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.05);
-    }
-
-    .card.unlocked::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; width: 4px; height: 100%;
-      background: var(--neon-cyan);
-      box-shadow: 0 0 10px var(--neon-cyan);
-    }
-
-    /* Hover 動畫與霓虹發光 */
-    .card.unlocked:hover {
-      transform: translateY(-5px) scale(1.02);
-      border-color: var(--neon-pink);
-      box-shadow: 0 0 25px rgba(255, 0, 85, 0.4), inset 0 0 15px rgba(255, 0, 85, 0.2);
-    }
-
-    .card.unlocked:hover::before {
-      background: var(--neon-pink);
-      box-shadow: 0 0 10px var(--neon-pink);
-    }
-
-    .card.unlocked:hover .card-title {
-      color: #fff;
-      text-shadow: 0 0 8px var(--neon-cyan);
-    }
-
-    /* 未解鎖卡片 (LOCKED) */
-    .card.locked {
-      background: var(--locked-bg);
-      border: 1px dashed rgba(255, 255, 255, 0.15);
-      cursor: not-allowed;
-      opacity: 0.65;
-    }
-
-    .card.locked::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; width: 4px; height: 100%;
-      background: var(--locked-color);
-    }
-
-    /* 卡片內容排版 */
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .card-status {
-      font-size: 0.75rem;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    .card.unlocked .card-status {
-      color: var(--neon-cyan);
-    }
-
-    .card.locked .card-status {
-      color: #a0aec0;
-    }
-
-    .card-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      line-height: 1.4;
-      transition: color 0.3s ease;
-    }
-
-    .card.locked .card-title {
-      color: #718096;
-    }
-
-    /* 關鍵字亮色 */
-    .jp-text {
-      font-size: 0.8rem;
-      display: block;
-      opacity: 0.85;
-      font-weight: normal;
-    }
-
-    /* Dynamic Glow Keyframe */
-    @keyframes pulse-glow {
-      0% { box-shadow: 0 0 15px rgba(0, 243, 255, 0.4), 0 0 30px rgba(255, 0, 85, 0.2); }
-      100% { box-shadow: 0 0 25px rgba(0, 243, 255, 0.8), 0 0 50px rgba(255, 0, 85, 0.5); }
-    }
-
-    /* ==========================================
-       4. 響應式適應 (RWD FOR MOBILE & TABLET)
-       ========================================== */
-    @media (max-width: 900px) {
-      .grid-container {
-        grid-template-columns: repeat(2, 1fr); /* 平板與手機版自動縮為雙欄 */
-        gap: 15px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      body {
-        padding: 25px 12px;
-      }
-      .profile-title {
-        font-size: 1.7rem;
-      }
-      .profile-subtitle {
-        font-size: 0.85rem;
-      }
-      .card {
-        padding: 15px 12px;
-      }
-      .card-title {
-        font-size: 0.88rem;
-      }
-    }
-  </style>
+        .btn:active {
+            transform: translateY(0);
+        }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <!-- 中央大頭貼與個人資訊欄 -->
-    <header class="profile-section">
-      <div class="avatar-wrapper">
-        <div class="avatar-frame">
-          <img class="avatar-img" src="https://api.dicebear.com/7.x/bottts/svg?seed=CyberUser" alt="Cyberpunk Avatar">
+    <!-- HTML 結構區 -->
+    <div class="card-container">
+        <!-- 圓形大頭貼 (可替換圖片網址) -->
+        <div class="avatar-box">
+            <img src="https://i.postimg.cc/gj2MbjNS/2a-Obo-R3Myk7GMr-Gxb-H9Xq-Rs3Ocz-LHIIQM1p-SM1rs.jpg" alt="大頭貼">
         </div>
-        <span class="avatar-tag">ONLINE</span>
-      </div>
-      <h1 class="profile-title">作品集 PORTFOLIO</h1>
-      <p class="profile-subtitle">[ ミッション選択 ]</p>
-    </header>
 
-    <!-- 16 個任務關卡按鈕區 -->
-    <main class="grid-container" id="grid">
-      <!-- 按鈕 1: Week 1 (已解鎖) -->
-      <a href="w1/index.html" class="card unlocked">
-        <div class="card-header">
-          <span class="card-status">WEEK 01</span>
-          <span class="card-status">CLEARED</span>
+        <!-- 個人資訊 -->
+        <h1 class="name">26110162</h1>
+        <p class="bio">✨ UI/UX 設計新手 | 喜歡記錄生活與色彩靈感 🎨</p>
+
+        <!-- 按鈕連結區 -->
+        <div class="btn-group">
+            <a href="https://instagram.com" target="_blank" class="btn btn-ig" onclick="handleClick(event, 'Instagram')">📷 Instagram</a>
+            <a href="mailto:example@email.com" class="btn btn-email" onclick="handleClick(event, 'Email')">✉️ 電子郵件</a>
         </div>
-        <div class="card-title">
-          Week 1-數位名片
-          <span class="jp-text">(デジタル名刺)</span>
-        </div>
-      </a>
+    </div>
 
-      <!-- 按鈕 2: Week 2 (已解鎖) -->
-      <a href="w2/index.html" class="card unlocked">
-        <div class="card-header">
-          <span class="card-status">WEEK 02</span>
-          <span class="card-status">CLEARED</span>
-        </div>
-        <div class="card-title">
-          Week 2-今天吃甚麼？
-          <span class="jp-text">(今日何食べる？)</span>
-        </div>
-      </a>
-
-      <!-- 剩餘 14 個按鈕 (未解鎖，JavaScript 動態渲染產生) -->
-    </main>
-  </div>
-
-  <script>
-    /* ==========================================
-       5. JAVASCRIPT: 動態產生與微互動
-       ========================================== */
-    document.addEventListener("DOMContentLoaded", () => {
-      const grid = document.getElementById("grid");
-
-      // 動態產生剩餘 14 個 (Week 3 ~ Week 16) 未解鎖卡片
-      for (let i = 3; i <= 16; i++) {
-        const weekNum = i < 10 ? `0${i}` : `${i}`;
-        const card = document.createElement("div");
-        card.className = "card locked";
-        card.innerHTML = `
-          <div class="card-header">
-            <span class="card-status">WEEK ${weekNum}</span>
-            <span class="card-status">🔒 未解放</span>
-          </div>
-          <div class="card-title">
-            Week ${i}-任務未鎖定
-            <span class="jp-text">(ロック中)</span>
-          </div>
-        `;
-
-        // 點擊未解鎖卡片時之提示效果
-        card.addEventListener("click", () => {
-          card.style.animation = "shake 0.3s ease-in-out";
-          setTimeout(() => card.style.animation = "", 300);
-        });
-
-        grid.appendChild(card);
-      }
-    });
-
-    // 晃動 Shake 動畫
-    const styleSheet = document.createElement("style");
-    styleSheet.innerText = `
-      @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        20%, 60% { transform: translateX(-5px); }
-        40%, 80% { transform: translateX(5px); }
-      }
-    `;
-    document.head.appendChild(styleSheet);
-  </script>
+    <!-- JavaScript 動作區（控制點擊後的互動效果） -->
+    <script>
+        function handleClick(event, platform) {
+            // 這裡可以自訂點擊按鈕時觸發的動態效果
+            console.log(`使用者點擊了 ${platform} 按鈕！`);
+        }
+    </script>
 </body>
 </html>
