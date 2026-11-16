@@ -3,480 +3,739 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PORTFOLIO // サイバーパンク PORTAL</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>雲端心電感應 - 多人默契大考驗 (W5 Mở)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        :root {
-            --bg-color: #0d021a;
-            --card-bg: rgba(20, 10, 35, 0.75);
-            --neon-cyan: #00f3ff;
-            --neon-pink: #ff0055;
-            --neon-purple: #9d00ff;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(circle at 50% 20%, #20003b 0%, transparent 60%),
-                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 30px 30px, 30px 30px;
-            color: #fff;
-            font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #FDEEEF 0%, #F4E3E3 40%, #E8D3DD 70%, #E2C2C6 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-            position: relative;
+            color: #5A4A56;
+            font-family: "Noto Sans TC", sans-serif;
             overflow-x: hidden;
+            margin: 0;
         }
 
-        /* Hiệu ứng đường quét màn hình CRT (Scanlines) */
-        body::before {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px;
-            z-index: 100;
-            pointer-events: none;
-            opacity: 0.6;
+        .font-rounded {
+            font-family: "Comfortaa", cursive;
         }
 
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            z-index: 1;
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 12px 36px 0 rgba(184, 140, 153, 0.15);
         }
 
-        /* Khu vực Profile ở trung tâm */
-        .profile-card {
-            background: var(--card-bg);
-            border: 2px solid var(--neon-cyan);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3), inset 0 0 15px rgba(0, 243, 255, 0.15);
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 24px -4px rgba(160, 120, 135, 0.12);
+        }
+
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .card-inner {
             position: relative;
-            margin-bottom: 40px;
-            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
-            backdrop-filter: blur(5px);
-        }
-
-        .avatar-wrapper {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 15px auto;
-        }
-
-        .avatar {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--neon-pink);
-            box-shadow: 0 0 15px var(--neon-pink);
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
         }
 
-        .avatar-frame {
+        .card-inner.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
             position: absolute;
-            top: -6px; left: -6px; right: -6px; bottom: -6px;
-            border: 2px dashed var(--neon-cyan);
-            border-radius: 50%;
-            animation: spin 20s linear infinite;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.25rem;
         }
 
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
+        .card-back {
+            transform: rotateY(180deg);
         }
 
-        .main-title {
-            font-size: 2.2rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-            color: #fff;
-            text-shadow: 0 0 8px var(--neon-cyan), 0 0 20px var(--neon-cyan);
-            margin-bottom: 5px;
+        .cloud-bg {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.45;
         }
 
-        .sub-title {
-            font-size: 1.1rem;
-            color: var(--neon-pink);
-            letter-spacing: 3px;
-            margin-bottom: 15px;
-            text-shadow: 0 0 5px var(--neon-pink);
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
         }
 
-        .status-bar {
-            display: inline-flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 6px 16px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.85rem;
-            color: #a0a0a0;
+        .animate-float-slow {
+            animation: float 8s ease-in-out infinite;
         }
 
-        .status-item span {
-            color: var(--neon-cyan);
-            font-weight: bold;
+        .animate-float-medium {
+            animation: float 5s ease-in-out infinite;
         }
 
-        /* Tiêu đề danh sách nhiệm vụ */
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
+        ::-webkit-scrollbar {
+            width: 6px;
         }
-
-        .section-title {
-            font-size: 1.3rem;
-            color: #fff;
-            letter-spacing: 2px;
-            background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.2);
         }
-
-        .section-line {
-            flex-grow: 1;
-            height: 2px;
-            background: linear-gradient(90deg, var(--neon-pink), transparent);
-        }
-
-        /* Lưới 16 nút nhiệm vụ */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-        }
-
-        /* Kiểu dáng thẻ nhiệm vụ đã mở khóa (Cyan) */
-        .task-card {
-            position: relative;
-            background: var(--card-bg);
-            border-radius: 6px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 110px;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border: 1px solid rgba(0, 243, 255, 0.4);
-            box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.05);
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .task-card::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--neon-cyan);
-            box-shadow: 0 0 8px var(--neon-cyan);
-        }
-
-        .task-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(0, 243, 255, 0.2);
-            background: rgba(0, 243, 255, 0.08);
-        }
-
-        .task-card:hover .card-title {
-            color: var(--neon-cyan);
-            text-shadow: 0 0 8px var(--neon-cyan);
-        }
-
-        /* Thẻ nhấn màu hồng neon (Pink Accent) */
-        .task-card.pink-accent {
-            border-color: rgba(255, 0, 85, 0.4);
-            box-shadow: inset 0 0 10px rgba(255, 0, 85, 0.05);
-        }
-
-        .task-card.pink-accent::before {
-            background: var(--neon-pink);
-            box-shadow: 0 0 8px var(--neon-pink);
-        }
-
-        .task-card.pink-accent:hover {
-            border-color: var(--neon-pink);
-            box-shadow: 0 0 20px rgba(255, 0, 85, 0.4), inset 0 0 15px rgba(255, 0, 85, 0.2);
-            background: rgba(255, 0, 85, 0.08);
-        }
-
-        .task-card.pink-accent:hover .card-title {
-            color: var(--neon-pink);
-            text-shadow: 0 0 8px var(--neon-pink);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .card-tag {
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 3px;
-            letter-spacing: 1px;
-            background: rgba(0, 243, 255, 0.15);
-            color: var(--neon-cyan);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-        }
-
-        .pink-accent .card-tag {
-            background: rgba(255, 0, 85, 0.15);
-            color: var(--neon-pink);
-            border: 1px solid rgba(255, 0, 85, 0.3);
-        }
-
-        .status-badge {
-            color: var(--neon-cyan);
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        .pink-accent .status-badge {
-            color: var(--neon-pink);
-        }
-
-        .card-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #e0e0e0;
-            line-height: 1.3;
-            transition: color 0.2s ease;
-        }
-
-        /* Responsive cho Tablet */
-        @media (max-width: 900px) {
-            .grid-container {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        /* Responsive cho Mobile (Tự động 2 cột) */
-        @media (max-width: 600px) {
-            .grid-container {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-
-            .main-title {
-                font-size: 1.6rem;
-            }
-
-            .sub-title {
-                font-size: 0.95rem;
-            }
-
-            .profile-card {
-                padding: 20px 15px;
-            }
-
-            .task-card {
-                padding: 12px;
-                min-height: 100px;
-            }
-
-            .card-title {
-                font-size: 0.85rem;
-            }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(211, 177, 194, 0.6);
+            border-radius: 10px;
         }
     </style>
 </head>
-<body>
+<body class="relative flex flex-col justify-between min-h-screen">
 
-    <div class="container">
-        <!-- Khu vực Profile -->
-        <header class="profile-card">
-            <div class="avatar-wrapper">
-                <div class="avatar-frame"></div>
-                <img src="https://via.placeholder.com/150/0d021a/00f3ff?text=AVATAR" alt="Profile Avatar" class="avatar">
-            </div>
-            <h1 class="main-title">作品集 PORTFOLIO</h1>
-            <p class="sub-title">[ ミッション選択 ]</p>
-            
-            <div class="status-bar">
-                <div class="status-item">PLAYER: <span>STUDENT</span></div>
-                <div class="status-item">STATUS: <span>ALL UNLOCKED</span></div>
-                <div class="status-item">CLEAR: <span>16 / 16</span></div>
-            </div>
-        </header>
-
-        <!-- Tiêu đề danh sách -->
-        <div class="section-header">
-            <h2 class="section-title">MISSIONS // 全任務解放</h2>
-            <div class="section-line"></div>
-        </div>
-
-        <!-- 16 Nút đều đã mở khóa -->
-        <main class="grid-container">
-            <!-- Week 1 -->
-            <a href="w1/index.html" class="task-card">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 01</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 1-數位名片<br><small>(デジタル名刺)</small></div>
-            </a>
-
-            <!-- Week 2 -->
-            <a href="w2/index.html" class="task-card pink-accent">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 02</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 2-今天吃甚麼？<br><small>(今日何食べる？)</small></div>
-            </a>
-
-            <!-- Week 3 -->
-            <a href="w3/index.html" class="task-card">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 03</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 3-任務 03<br><small>(ミッション 03)</small></div>
-            </a>
-
-            <!-- Week 4 -->
-            <a href="w4/index.html" class="task-card pink-accent">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 04</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 4-任務 04<br><small>(ミッション 04)</small></div>
-            </a>
-
-            <!-- Week 5 -->
-            <a href="w5/index.html" class="task-card">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 05</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 5-任務 05<br><small>(ミッション 05)</small></div>
-            </a>
-
-            <!-- Week 6 -->
-            <a href="w6/index.html" class="task-card pink-accent">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 06</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 6-任務 06<br><small>(ミッション 06)</small></div>
-            </a>
-
-            <!-- Week 7 -->
-            <a href="w7/index.html" class="task-card">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 07</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 7-任務 07<br><small>(ミッション 07)</small></div>
-            </a>
-
-            <!-- Week 8 -->
-            <a href="w8/index.html" class="task-card pink-accent">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 08</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 8-任務 08<br><small>(ミッション 08)</small></div>
-            </a>
-
-            <!-- Week 9 -->
-            <a href="w9/index.html" class="task-card">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 09</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 9-任務 09<br><small>(ミッション 09)</small></div>
-            </a>
-
-            <!-- Week 10 -->
-            <a href="w10/index.html" class="task-card pink-accent">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 10</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 10-任務 10<br><small>(ミッション 10)</small></div>
-            </a>
-
-            <!-- Week 11 -->
-            <a href="w11/index.html" class="task-card">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 11</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 11-任務 11<br><small>(ミッション 11)</small></div>
-            </a>
-
-            <!-- Week 12 -->
-            <a href="w12/index.html" class="task-card pink-accent">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 12</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 12-任務 12<br><small>(ミッション 12)</small></div>
-            </a>
-
-            <!-- Week 13 -->
-            <a href="w13/index.html" class="task-card">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 13</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 13-任務 13<br><small>(ミッション 13)</small></div>
-            </a>
-
-            <!-- Week 14 -->
-            <a href="w14/index.html" class="task-card pink-accent">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 14</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 14-任務 14<br><small>(ミッション 14)</small></div>
-            </a>
-
-            <!-- Week 15 -->
-            <a href="w15/index.html" class="task-card">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 15</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 15-任務 15<br><small>(ミッション 15)</small></div>
-            </a>
-
-            <!-- Week 16 -->
-            <a href="w16/index.html" class="task-card pink-accent">
-                <div class="card-header">
-                    <span class="card-tag">WEEK 16</span>
-                    <span class="status-badge">OPEN</span>
-                </div>
-                <div class="card-title">Week 16-最終專案<br><small>(ファイナル・ミッション)</small></div>
-            </a>
-        </main>
+    <!-- Floating Cloud Graphics Background -->
+    <div class="cloud-bg top-10 left-[-50px] animate-float-slow">
+        <svg width="220" height="120" viewBox="0 0 200 100" fill="white">
+            <path d="M 30,60 A 25,25 0 0,1 60,35 A 35,35 0 0,1 120,30 A 30,30 0 0,1 160,50 A 25,25 0 0,1 170,80 L 30,80 Z" opacity="0.6"/>
+        </svg>
+    </div>
+    <div class="cloud-bg bottom-20 right-[-40px] animate-float-medium" style="animation-delay: -2s;">
+        <svg width="280" height="150" viewBox="0 0 200 100" fill="white">
+            <path d="M 30,60 A 25,25 0 0,1 60,35 A 35,35 0 0,1 120,30 A 30,30 0 0,1 160,50 A 25,25 0 0,1 170,80 L 30,80 Z" opacity="0.5"/>
+        </svg>
     </div>
 
+    <!-- Header -->
+    <header class="relative z-20 w-full px-4 py-3 flex justify-between items-center max-w-6xl mx-auto">
+        <div class="flex items-center space-x-2">
+            <button id="w5-unlock-badge" onclick="toggleW5Unlock()" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100/90 hover:bg-emerald-200 text-emerald-800 shadow-sm border border-emerald-300 transition cursor-pointer">
+                <i id="w5-lock-icon" class="fa-solid fa-lock-open mr-1.5 text-emerald-600"></i>
+                <span id="w5-status-text">W5 打開 (已解鎖)</span>
+            </button>
+
+            <span id="connection-badge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-white/70 text-[#6C5B68] shadow-sm border border-white">
+                <span id="status-dot" class="w-2 h-2 mr-1.5 rounded-full bg-yellow-400 animate-pulse"></span>
+                <span id="status-text">準備就緒</span>
+            </span>
+            <span id="room-code-badge" class="hidden inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#E8C5C8]/30 text-[#6C5B68] border border-white/60">
+                <i class="fa-solid fa-house-signal mr-1.5 text-[#E08E9D]"></i>
+                <span id="display-room-code">---</span>
+            </span>
+        </div>
+
+        <div class="text-center">
+            <h1 class="font-rounded font-bold text-xl md:text-2xl text-[#6C5B68] tracking-wide flex items-center justify-center">
+                <i class="fa-solid fa-cloud text-[#E08E9D] mr-2"></i>
+                雲端心電感應
+            </h1>
+        </div>
+
+        <div class="flex items-center space-x-2">
+            <button id="secret-host-btn" onclick="toggleHostDrawer()" class="p-2 text-[#6C5B68]/80 hover:text-[#E08E9D] transition-all duration-300 rounded-full bg-white/50 hover:bg-white/80 focus:outline-none shadow-sm" title="房主控制台">
+                <i class="fa-solid fa-user-gear text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="relative z-10 flex-1 max-w-5xl w-full mx-auto px-4 py-4 flex flex-col justify-center items-center">
+
+        <!-- VIEW 1: LOGIN -->
+        <div id="login-view" class="w-full max-w-md glass-panel rounded-3xl p-6 md:p-8 transition-all duration-500 my-auto">
+            <div class="text-center mb-6">
+                <div class="inline-block p-4 rounded-full bg-[#F4E3E3]/80 mb-3 shadow-inner">
+                    <i class="fa-solid fa-heart-pulse text-3xl text-[#E08E9D]"></i>
+                </div>
+                <h2 class="text-xl font-bold text-[#6C5B68]">加入心電感應房間</h2>
+                <p class="text-xs text-[#6C5B68]/70 mt-1">輸入暱稱與房號，測試你們的雲端默契！</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-[#6C5B68]/80 mb-1 ml-1">玩家暱稱</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-[#D3B1C2]"></i>
+                        <input type="text" id="player-name-input" placeholder="請輸入您的名稱" 
+                            class="w-full pl-10 pr-4 py-2.5 bg-white/70 border border-[#D3B1C2]/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E08E9D]/50 text-[#6C5B68] text-sm font-medium transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-[#6C5B68]/80 mb-1 ml-1">房間代碼</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-key absolute left-3.5 top-3.5 text-[#D3B1C2]"></i>
+                        <input type="text" id="room-code-input" placeholder="例如: W5 或 8888" 
+                            class="w-full pl-10 pr-4 py-2.5 bg-white/70 border border-[#D3B1C2]/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E08E9D]/50 text-[#6C5B68] text-sm font-medium transition uppercase">
+                    </div>
+                </div>
+
+                <div class="pt-2 grid grid-cols-2 gap-3">
+                    <button onclick="joinRoom('player')" class="w-full py-3 px-4 bg-gradient-to-r from-[#E08E9D] to-[#D3B1C2] text-white rounded-xl font-semibold shadow-md hover:shadow-lg hover:opacity-95 active:scale-95 transition transform text-sm flex items-center justify-center">
+                        <i class="fa-solid fa-right-to-bracket mr-2"></i> 以玩家加入
+                    </button>
+                    <button onclick="joinRoom('host')" class="w-full py-3 px-4 bg-white/80 text-[#6C5B68] border border-[#E8C5C8] rounded-xl font-semibold hover:bg-[#F4E3E3] active:scale-95 transition transform text-sm flex items-center justify-center">
+                        <i class="fa-solid fa-crown mr-2 text-yellow-500"></i> 我是房主
+                    </button>
+                </div>
+
+                <div class="pt-2 border-t border-[#D3B1C2]/30">
+                    <button onclick="quickOpenW5()" class="w-full py-2.5 px-4 bg-emerald-500/90 hover:bg-emerald-600 text-white rounded-xl font-bold shadow-sm active:scale-95 transition transform text-xs flex items-center justify-center">
+                        <i class="fa-solid fa-unlock-keyhole mr-2"></i> W5 打開 (一鍵進入房主出題)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: GAMEPLAY -->
+        <div id="game-view" class="hidden w-full space-y-6">
+            <div class="glass-panel rounded-2xl p-4 md:px-6 flex flex-wrap justify-between items-center gap-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-[#F4E3E3] flex items-center justify-center border border-white">
+                        <i id="user-role-icon" class="fa-solid fa-user text-[#E08E9D]"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span id="current-player-display" class="font-bold text-[#6C5B68] text-base">---</span>
+                            <span id="role-badge" class="px-2 py-0.5 text-xs rounded-md bg-[#E8C5C8]/40 text-[#6C5B68]">玩家</span>
+                        </div>
+                        <p class="text-xs text-[#6C5B68]/60">房號: <span id="current-room-display" class="font-semibold">---</span></p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <button onclick="toggleHostDrawer()" class="px-3 py-1.5 text-xs bg-[#E08E9D] hover:opacity-90 text-white font-semibold rounded-lg shadow-sm flex items-center">
+                        <i class="fa-solid fa-pen-to-square mr-1.5"></i> 出題 / 控制台
+                    </button>
+                    <button onclick="copyRoomLink()" class="px-3 py-1.5 text-xs bg-white/80 hover:bg-white text-[#6C5B68] rounded-lg border border-[#D3B1C2]/30 transition shadow-sm flex items-center">
+                        <i class="fa-solid fa-share-nodes mr-1.5 text-[#E08E9D]"></i> 複製連結
+                    </button>
+                    <button onclick="leaveRoom()" class="px-3 py-1.5 text-xs bg-[#E8C5C8]/30 hover:bg-[#E8C5C8]/60 text-[#6C5B68] rounded-lg transition border border-white/40 flex items-center">
+                        <i class="fa-solid fa-door-open mr-1.5"></i> 離開
+                    </button>
+                </div>
+            </div>
+
+            <!-- STATE 1: SETUP -->
+            <div id="state-setup" class="glass-panel rounded-3xl p-8 text-center max-w-xl mx-auto space-y-4">
+                <div class="animate-bounce inline-block text-4xl text-[#E08E9D] mb-2">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                </div>
+                <h3 class="text-xl font-bold text-[#6C5B68]">房主正在準備題目中...</h3>
+                <p class="text-xs text-[#6C5B68]/70 max-w-xs mx-auto">請點擊下方按鈕設定題目，設定完成後題目會立刻顯示在畫面中央！</p>
+                
+                <div class="pt-4 border-t border-[#D3B1C2]/20">
+                    <button onclick="toggleHostDrawer()" class="px-5 py-2.5 bg-[#E08E9D] text-white text-xs font-semibold rounded-xl shadow-md hover:opacity-90 transition">
+                        <i class="fa-solid fa-pen-to-square mr-1.5"></i> 立即設定題目
+                    </button>
+                </div>
+            </div>
+
+            <!-- STATE 2: PLAYING -->
+            <div id="state-playing" class="hidden space-y-6">
+                <div class="glass-panel rounded-3xl p-6 md:p-8 text-center border-2 border-[#E8C5C8]/50 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#E8C5C8] via-[#E08E9D] to-[#D3B1C2]"></div>
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-[#E8C5C8]/40 text-[#6C5B68] mb-3">
+                        <i class="fa-solid fa-lightbulb mr-1"></i> 本輪默契題目
+                    </span>
+                    <h2 id="question-text" class="text-2xl md:text-3xl font-bold text-[#6C5B68] leading-relaxed">---</h2>
+                </div>
+
+                <div class="glass-panel rounded-3xl p-6 max-w-md mx-auto">
+                    <h4 class="text-sm font-bold text-[#6C5B68] mb-3 text-center flex items-center justify-center">
+                        <i class="fa-solid fa-pen-nib text-[#E08E9D] mr-2"></i> 輸入您的默契答案
+                    </h4>
+                    <div class="space-y-3">
+                        <input type="text" id="answer-input" placeholder="請寫下您的回答 (不要讓旁人看到喔)" 
+                            class="w-full px-4 py-3 bg-white/80 border border-[#D3B1C2]/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E08E9D]/50 text-[#6C5B68] font-medium text-center">
+                        <button id="submit-answer-btn" onclick="submitAnswer()" class="w-full py-3 bg-gradient-to-r from-[#E08E9D] to-[#D3B1C2] text-white font-bold rounded-xl shadow-md hover:opacity-95 active:scale-95 transition transform">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> 送出答案
+                        </button>
+                    </div>
+                    <div id="answered-status" class="mt-3 text-center text-xs text-[#6C5B68]/70">
+                        <i class="fa-solid fa-circle-check text-green-500 mr-1 hidden" id="my-answered-icon"></i>
+                        <span id="answered-count-text">目前提交人數: 0 人</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATE 3: REVEALED -->
+            <div id="state-revealed" class="hidden space-y-6">
+                <div class="text-center">
+                    <span class="inline-block px-4 py-1.5 rounded-full text-xs font-bold bg-[#E08E9D] text-white shadow-sm mb-2 animate-pulse">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> 答案全網頁同步大公開
+                    </span>
+                    <h3 id="revealed-question-title" class="text-lg font-bold text-[#6C5B68]">題目：---</h3>
+                </div>
+
+                <div id="cards-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-2"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- HOST DRAWER -->
+    <div id="host-drawer" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-end transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div id="host-drawer-content" class="w-full max-w-md bg-[#FAF6F6] h-full shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 overflow-y-auto">
+            <div>
+                <div class="flex justify-between items-center pb-4 border-b border-[#D3B1C2]/30">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-[#E08E9D] text-white flex items-center justify-center">
+                            <i class="fa-solid fa-crown text-sm"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-[#6C5B68]">房主控制台</h3>
+                    </div>
+                    <button onclick="toggleHostDrawer()" class="p-2 text-[#6C5B68]/60 hover:text-[#6C5B68] rounded-full">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <div class="mt-6 space-y-6">
+                    <div class="glass-panel p-4 rounded-2xl space-y-3">
+                        <label class="block text-xs font-bold text-[#6C5B68] uppercase tracking-wider">
+                            <i class="fa-solid fa-bullhorn text-[#E08E9D] mr-1"></i> 設定新題目 (開始遊戲)
+                        </label>
+                        <textarea id="host-question-input" rows="3" placeholder="例如：說到夏天第一個想到的水果？" 
+                            class="w-full p-3 bg-white/80 border border-[#D3B1C2]/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E08E9D] text-[#6C5B68]"></textarea>
+                        <button onclick="hostSetQuestion()" class="w-full py-2.5 bg-[#E08E9D] text-white text-sm font-bold rounded-xl shadow hover:opacity-90 transition flex items-center justify-center">
+                            <i class="fa-solid fa-play mr-2"></i> 發布題目並開始填答
+                        </button>
+                    </div>
+
+                    <div class="glass-panel p-4 rounded-2xl space-y-2">
+                        <h4 class="text-xs font-bold text-[#6C5B68] uppercase tracking-wider flex justify-between items-center">
+                            <span><i class="fa-solid fa-users text-[#E08E9D] mr-1"></i> 已填答玩家清單</span>
+                            <span id="host-answered-ratio" class="text-[#E08E9D] font-bold">0 人</span>
+                        </h4>
+                        <div id="host-players-list" class="space-y-1.5 max-h-40 overflow-y-auto pr-1 pt-1 text-xs text-[#6C5B68]">
+                            <p class="text-[#6C5B68]/50 text-center py-2">尚無提交紀錄...</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-4 rounded-2xl space-y-3">
+                        <label class="block text-xs font-bold text-[#6C5B68] uppercase tracking-wider">
+                            <i class="fa-solid fa-eye text-[#E08E9D] mr-1"></i> 階段三：同步翻牌開牌
+                        </label>
+                        <button onclick="hostRevealAnswers()" class="w-full py-3 bg-gradient-to-r from-purple-500 to-[#E08E9D] text-white text-sm font-bold rounded-xl shadow-md hover:opacity-95 transition flex items-center justify-center">
+                            <i class="fa-solid fa-layer-group mr-2"></i> 全網頁同步 3D 開牌！
+                        </button>
+                    </div>
+
+                    <div class="glass-panel p-4 rounded-2xl space-y-3 border border-red-200/50">
+                        <label class="block text-xs font-bold text-red-400 uppercase tracking-wider">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> 重置房間狀態
+                        </label>
+                        <button onclick="hostResetGame()" class="w-full py-2 bg-red-400/80 hover:bg-red-500 text-white text-xs font-bold rounded-xl transition">
+                            重置本房至等待階段
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 text-center border-t border-[#D3B1C2]/20">
+                <p class="text-xs text-[#6C5B68]/50">房間代碼: <span id="host-room-code-display" class="font-bold">---</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <footer class="relative z-10 py-3 text-center text-xs text-[#6C5B68]/50">
+        雲端心電感應 &copy; Pink Morandi Edition (W5 Unlocked)
+    </footer>
+
+    <script>
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzQSxlZkIyFI-c2-k7TtLO5iyxfbhohKJT8Krm20Wvt7U-BqxEne6L2J5XwAYRsWmTS/exec";
+        const POLLING_INTERVAL = 2500;
+
+        let currentRoom = "";
+        let playerName = "";
+        let userRole = "player";
+        let pollingTimer = null;
+        let isFlippedState = false;
+        let isW5Unlocked = true;
+        let useLocalMode = false; // Tự động bật nếu Google Apps Script bị lỗi
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomParam = urlParams.get('room');
+            if (roomParam) {
+                document.getElementById('room-code-input').value = roomParam;
+            }
+        });
+
+        // Quản lý lưu trữ cục bộ (dự phòng khi Google Apps Script lỗi)
+        function getLocalRoomState(room) {
+            try {
+                const raw = localStorage.getItem(`telepathy_room_${room}`);
+                return raw ? JSON.parse(raw) : { status: "setup", question: "", answers: {} };
+            } catch (e) {
+                return { status: "setup", question: "", answers: {} };
+            }
+        }
+
+        function saveLocalRoomState(room, state) {
+            try {
+                localStorage.setItem(`telepathy_room_${room}`, JSON.stringify(state));
+            } catch (e) {}
+        }
+
+        function toggleW5Unlock() {
+            isW5Unlocked = !isW5Unlocked;
+            const badge = document.getElementById('w5-unlock-badge');
+            const icon = document.getElementById('w5-lock-icon');
+            const text = document.getElementById('w5-status-text');
+
+            if (isW5Unlocked) {
+                badge.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100/90 hover:bg-emerald-200 text-emerald-800 shadow-sm border border-emerald-300 transition cursor-pointer";
+                icon.className = "fa-solid fa-lock-open mr-1.5 text-emerald-600";
+                text.textContent = "W5 打開 (已解鎖)";
+            } else {
+                badge.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100/90 hover:bg-amber-200 text-amber-800 shadow-sm border border-amber-300 transition cursor-pointer";
+                icon.className = "fa-solid fa-lock mr-1.5 text-amber-600";
+                text.textContent = "尚未解鎖 (Bấm mở W5)";
+            }
+        }
+
+        function quickOpenW5() {
+            if (!isW5Unlocked) toggleW5Unlock();
+            const nameInput = document.getElementById('player-name-input');
+            const roomInput = document.getElementById('room-code-input');
+            if (!nameInput.value.trim()) nameInput.value = "W5房主";
+            if (!roomInput.value.trim()) roomInput.value = "W5";
+            joinRoom('host');
+        }
+
+        function joinRoom(role) {
+            const nameInput = document.getElementById('player-name-input').value.trim();
+            let roomInput = document.getElementById('room-code-input').value.trim().toUpperCase();
+
+            if (!nameInput) {
+                showToast("請輸入暱稱！", "warning");
+                return;
+            }
+
+            if (!roomInput) {
+                roomInput = "W5";
+                document.getElementById('room-code-input').value = roomInput;
+            }
+
+            playerName = nameInput;
+            currentRoom = roomInput;
+            userRole = role;
+
+            document.getElementById('current-player-display').textContent = playerName;
+            document.getElementById('current-room-display').textContent = currentRoom;
+            document.getElementById('display-room-code').textContent = currentRoom;
+            document.getElementById('host-room-code-display').textContent = currentRoom;
+            document.getElementById('room-code-badge').classList.remove('hidden');
+
+            const roleBadge = document.getElementById('role-badge');
+            const roleIcon = document.getElementById('user-role-icon');
+            if (userRole === 'host') {
+                roleBadge.textContent = "房主";
+                roleBadge.className = "px-2 py-0.5 text-xs rounded-md bg-yellow-200 text-yellow-800 font-bold";
+                roleIcon.className = "fa-solid fa-crown text-yellow-500";
+            } else {
+                roleBadge.textContent = "玩家";
+                roleBadge.className = "px-2 py-0.5 text-xs rounded-md bg-[#E8C5C8]/40 text-[#6C5B68]";
+                roleIcon.className = "fa-solid fa-user text-[#E08E9D]";
+            }
+
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('game-view').classList.remove('hidden');
+
+            showToast(`成功加入房間 [${currentRoom}]`, "success");
+            fetchGameState();
+            startPolling();
+        }
+
+        function leaveRoom() {
+            stopPolling();
+            currentRoom = "";
+            isFlippedState = false;
+            document.getElementById('game-view').classList.add('hidden');
+            document.getElementById('login-view').classList.remove('hidden');
+            document.getElementById('room-code-badge').classList.add('hidden');
+        }
+
+        function copyRoomLink() {
+            const shareUrl = `${window.location.origin}${window.location.pathname}?room=${currentRoom}`;
+            navigator.clipboard?.writeText(shareUrl);
+            showToast("已複製房間連結！", "success");
+        }
+
+        function startPolling() {
+            stopPolling();
+            pollingTimer = setInterval(fetchGameState, POLLING_INTERVAL);
+        }
+
+        function stopPolling() {
+            if (pollingTimer) {
+                clearInterval(pollingTimer);
+                pollingTimer = null;
+            }
+        }
+
+        function updateConnectionStatus(status) {
+            const dot = document.getElementById('status-dot');
+            const text = document.getElementById('status-text');
+            if (status === "connected") {
+                dot.className = "w-2 h-2 mr-1.5 rounded-full bg-emerald-400";
+                text.textContent = "雲端同步中";
+            } else if (status === "local") {
+                dot.className = "w-2 h-2 mr-1.5 rounded-full bg-sky-400";
+                text.textContent = "本機模式 (已啟用)";
+            } else {
+                dot.className = "w-2 h-2 mr-1.5 rounded-full bg-yellow-400 animate-pulse";
+                text.textContent = "連線中";
+            }
+        }
+
+        async function fetchGameState() {
+            if (!currentRoom) return;
+
+            if (useLocalMode) {
+                updateConnectionStatus("local");
+                renderGameState(getLocalRoomState(currentRoom));
+                return;
+            }
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                const res = await fetch(`${GAS_API_URL}?room=${encodeURIComponent(currentRoom)}`, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (!res.ok) throw new Error("GAS Error");
+                const data = await res.json();
+                updateConnectionStatus("connected");
+                renderGameState(data);
+            } catch (err) {
+                // Nếu Google Apps Script không phản hồi, tự chuyển sang Local Mode để không bị kẹt
+                useLocalMode = true;
+                updateConnectionStatus("local");
+                renderGameState(getLocalRoomState(currentRoom));
+            }
+        }
+
+        async function postGameAction(payload) {
+            payload.room = currentRoom;
+
+            // Luôn cập nhật dữ liệu cục bộ ngay lập tức để giao diện phản hồi tức thì
+            const state = getLocalRoomState(currentRoom);
+            if (payload.action === 'setQuestion') {
+                state.status = 'playing';
+                state.question = payload.question;
+                state.answers = {};
+            } else if (payload.action === 'submitAnswer') {
+                state.answers[payload.player] = payload.answer;
+            } else if (payload.action === 'reveal') {
+                state.status = 'revealed';
+            } else if (payload.action === 'reset') {
+                state.status = 'setup';
+                state.question = '';
+                state.answers = {};
+            }
+            saveLocalRoomState(currentRoom, state);
+            renderGameState(state);
+
+            // Đồng thời gửi lên Google Apps Script nếu chưa chuyển sang chế độ chỉ dùng Local
+            if (!useLocalMode) {
+                try {
+                    await fetch(GAS_API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    });
+                } catch (err) {
+                    useLocalMode = true;
+                    updateConnectionStatus("local");
+                }
+            }
+        }
+
+        async function submitAnswer() {
+            const inputEl = document.getElementById('answer-input');
+            const answer = inputEl.value.trim();
+            if (!answer) {
+                showToast("請先輸入答案再送出！", "warning");
+                return;
+            }
+            await postGameAction({
+                action: 'submitAnswer',
+                player: playerName,
+                answer: answer
+            });
+            showToast("答案已送出！", "success");
+        }
+
+        function toggleHostDrawer() {
+            if (!currentRoom) {
+                showToast("請先加入或建立房間！", "warning");
+                return;
+            }
+            const drawer = document.getElementById('host-drawer');
+            const content = document.getElementById('host-drawer-content');
+            const isOpen = !drawer.classList.contains('pointer-events-none');
+
+            if (isOpen) {
+                drawer.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.add('translate-x-full');
+            } else {
+                drawer.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('translate-x-full');
+            }
+        }
+
+        async function hostSetQuestion() {
+            const questionInput = document.getElementById('host-question-input');
+            const question = questionInput.value.trim();
+            if (!question) {
+                showToast("請輸入題目內容！", "warning");
+                return;
+            }
+            await postGameAction({ action: 'setQuestion', question: question });
+            questionInput.value = "";
+            document.getElementById('answer-input').value = "";
+            toggleHostDrawer();
+            showToast("題目已發布！", "success");
+        }
+
+        async function hostRevealAnswers() {
+            await postGameAction({ action: 'reveal' });
+            toggleHostDrawer();
+        }
+
+        async function hostResetGame() {
+            await postGameAction({ action: 'reset' });
+            document.getElementById('answer-input').value = "";
+            toggleHostDrawer();
+            showToast("房間已重置", "info");
+        }
+
+        function updateHostMonitor(answersObj) {
+            const entries = Object.entries(answersObj || {});
+            document.getElementById('host-answered-ratio').textContent = `${entries.length} 人已提交`;
+            const listEl = document.getElementById('host-players-list');
+
+            if (entries.length === 0) {
+                listEl.innerHTML = `<p class="text-[#6C5B68]/50 text-center py-2">尚無提交紀錄...</p>`;
+                return;
+            }
+
+            listEl.innerHTML = entries.map(([name]) => `
+                <div class="flex items-center justify-between bg-white/70 px-3 py-1.5 rounded-lg border border-white">
+                    <span class="font-medium text-[#6C5B68]">${escapeHtml(name)}</span>
+                    <span class="text-emerald-500 text-xs font-bold"><i class="fa-solid fa-check mr-1"></i>已填答</span>
+                </div>
+            `).join('');
+        }
+
+        function renderGameState(data) {
+            if (!data) return;
+            const state = data.data ? data.data : data;
+            const status = state.status || "setup";
+            const question = state.question || "";
+            const answers = state.answers || {};
+
+            updateHostMonitor(answers);
+
+            const setupView = document.getElementById('state-setup');
+            const playingView = document.getElementById('state-playing');
+            const revealedView = document.getElementById('state-revealed');
+
+            setupView.classList.add('hidden');
+            playingView.classList.add('hidden');
+            revealedView.classList.add('hidden');
+
+            if (status === "playing" && question) {
+                playingView.classList.remove('hidden');
+                document.getElementById('question-text').textContent = question;
+                document.getElementById('answered-count-text').textContent = `目前提交人數: ${Object.keys(answers).length} 人`;
+                document.getElementById('my-answered-icon').classList.toggle('hidden', !answers[playerName]);
+                isFlippedState = false;
+            } else if (status === "revealed") {
+                revealedView.classList.remove('hidden');
+                document.getElementById('revealed-question-title').textContent = `題目：${question}`;
+                renderAnswerCards(answers);
+            } else {
+                setupView.classList.remove('hidden');
+                isFlippedState = false;
+            }
+        }
+
+        function renderAnswerCards(answers) {
+            const grid = document.getElementById('cards-grid');
+            const entries = Object.entries(answers || {});
+
+            if (entries.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-sm text-[#6C5B68]/60 py-8">本輪沒有人提交答案喔！</p>`;
+                return;
+            }
+
+            grid.innerHTML = entries.map(([name, ans], idx) => `
+                <div class="perspective-1000 h-44 cursor-pointer" onclick="this.querySelector('.card-inner').classList.toggle('is-flipped')">
+                    <div class="card-inner ${isFlippedState ? 'is-flipped' : ''}" id="card-${idx}">
+                        <div class="card-front glass-card flex flex-col items-center justify-center p-4 text-center">
+                            <div class="w-12 h-12 rounded-full bg-[#F4E3E3] flex items-center justify-center mb-2 text-[#E08E9D] text-xl">
+                                <i class="fa-solid fa-cloud"></i>
+                            </div>
+                            <p class="font-bold text-[#6C5B68]">${escapeHtml(name)}</p>
+                            <span class="text-xs text-[#6C5B68]/50 mt-1">點擊翻牌</span>
+                        </div>
+                        <div class="card-back bg-gradient-to-br from-[#E08E9D] to-[#D3B1C2] text-white flex flex-col items-center justify-center p-4 text-center shadow-lg">
+                            <span class="text-xs opacity-80 mb-1">${escapeHtml(name)} 的答案</span>
+                            <p class="text-xl font-bold break-words w-full">${escapeHtml(ans)}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (!isFlippedState) {
+                setTimeout(() => {
+                    isFlippedState = true;
+                    document.querySelectorAll('.card-inner').forEach(el => el.classList.add('is-flipped'));
+                }, 400);
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = {
+                success: "bg-emerald-500 text-white",
+                warning: "bg-amber-500 text-white",
+                error: "bg-rose-500 text-white",
+                info: "bg-[#6C5B68] text-white"
+            };
+            toast.className = `${colors[type] || colors.info} px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold transition-all duration-300 transform translate-y-2 opacity-0`;
+            toast.textContent = message;
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => toast.classList.remove('translate-y-2', 'opacity-0'));
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
